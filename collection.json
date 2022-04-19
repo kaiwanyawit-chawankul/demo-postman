@@ -1,0 +1,114 @@
+{
+	"info": {
+		"_postman_id": "a1c3abef-7c7c-4480-8711-048215895abf",
+		"name": "Postman-Demo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Test",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let testcases = pm.collectionVariables.get(\"testcases\");",
+							"",
+							"if(!testcases || testcases.length == 0) {",
+							"    testcases = [",
+							"        {expected:\"hola to our restful API\", culture:\"es-ES\"},",
+							"        {expected:\"bonjour to our restful API\", culture:\"fr-FR\"},",
+							"        {expected:\"guten tag to our restful API\", culture:\"de-DE\"},",
+							"        {expected:\"salve to our restful API\", culture:\"it-IT\"},",
+							"        {expected:\"nǐn hǎo to our restful API\", culture:\"zh-CN\"},",
+							"        {expected:\"สวัสดี to our restful API\", culture:\"th-TH\"},",
+							"        {expected:\"Hello to our restful API\", culture:\"en-US\"},",
+							"    ];",
+							"}",
+							"",
+							"let testCase = testcases.shift();",
+							"",
+							"console.log(testCase)",
+							"",
+							"pm.collectionVariables.set(\"testCase.culture\", testCase.culture);",
+							"pm.collectionVariables.set(\"testCase.expected\", testCase.expected);",
+							"",
+							"pm.collectionVariables.set(\"testcases\", testcases);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const testcases = pm.collectionVariables.get(\"testcases\");",
+							"const culture = pm.collectionVariables.get(\"testCase.culture\");",
+							"const expected = pm.collectionVariables.get(\"testCase.expected\");",
+							"",
+							"if (testcases && testcases.length > 0){",
+							"    postman.setNextRequest(\"Test\");",
+							"} else {",
+							"    postman.setNextRequest(null);",
+							"}",
+							"",
+							"pm.test(`${culture} returns correctly`, function () {",
+							"    const responseText = pm.response.text();",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(responseText).to.eq(expected);",
+							"})",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "culture",
+						"value": "{{testCase.culture}}",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000"
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "culture",
+			"value": ""
+		},
+		{
+			"key": "cultures",
+			"value": ""
+		},
+		{
+			"key": "testCase.from",
+			"value": ""
+		},
+		{
+			"key": "testCase.culture",
+			"value": ""
+		},
+		{
+			"key": "testCase.expected",
+			"value": ""
+		},
+		{
+			"key": "testcases",
+			"value": ""
+		}
+	]
+}
